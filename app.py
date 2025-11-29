@@ -11,7 +11,7 @@ CORS(app)
 
 # 전역 변수
 recognizer = GestureRecognizer()
-controller = DeviceController(arduino_port='COM3')
+controller = DeviceController(arduino_port='/dev/ttyUSB0')  # 또는 /dev/ttyACM0
 current_gesture = "UNKNOWN"
 
 class GestureRecognitionThread(threading.Thread):
@@ -19,13 +19,21 @@ class GestureRecognitionThread(threading.Thread):
     def __init__(self):
         super().__init__()
         self.running = True
-        self.cap = cv2.VideoCapture(0)
+        self.cap = None
         self.daemon = True
     
     def run(self):
-        global current_gesture
+        global current_gesture, controller
         
-        print("🎥 Camera thread started")
+        print("🎥 Camera thread starting...")
+        
+        # 카메라 초기화
+        self.cap = cv2.VideoCapture(0)
+        if not self.cap.isOpened():
+            print("❌ Camera not found!")
+            return
+        
+        print("✅ Camera thread started")
         
         while self.running:
             success, frame = self.cap.read()
@@ -42,7 +50,7 @@ class GestureRecognitionThread(threading.Thread):
                     gesture = recognizer.recognize_gesture(hand_landmarks)
                     current_gesture = gesture
                     
-                    # 제스처에 따른 동작 실행
+                    # 제스처에 따른 동작 실행 - controller 직접 호출!
                     if gesture != "UNKNOWN" and recognizer.should_trigger_action(gesture):
                         print(f"\n[API] Gesture detected: {gesture}")
                         
@@ -58,6 +66,10 @@ class GestureRecognitionThread(threading.Thread):
                             print("(Reserved gesture)")
                         elif gesture == "THUMBS_DOWN":
                             print("(Reserved gesture)")
+                        
+                        # 상태 변경 후 출력
+                        status = controller.get_status()
+                        print(f"Current status: {status}")
             else:
                 current_gesture = "UNKNOWN"
             
@@ -65,7 +77,8 @@ class GestureRecognitionThread(threading.Thread):
     
     def stop(self):
         self.running = False
-        self.cap.release()
+        if self.cap:
+            self.cap.release()
         print("🎥 Camera thread stopped")
 
 # 백그라운드 스레드
@@ -128,8 +141,11 @@ if __name__ == '__main__':
     # 제스처 인식 시작
     start_gesture_recognition()
     
+    # 카메라 스레드가 시작될 때까지 잠깐 대기
+    time.sleep(2)
+    
     print("\n✅ Server ready!")
-    print("📡 API running on http://localhost:5000")
+    print("📡 API running on http://0.0.0.0:5000")
     print("\nAvailable endpoints:")
     print("  - http://localhost:5000/api/status")
     print("  - http://localhost:5000/api/gesture")
@@ -139,7 +155,7 @@ if __name__ == '__main__':
     print("=" * 60)
     
     try:
-        app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
+        app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False, threaded=True)
     except KeyboardInterrupt:
         print("\n\n👋 Shutting down...")
         if gesture_thread:
