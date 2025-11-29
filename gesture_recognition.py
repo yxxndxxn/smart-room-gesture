@@ -48,11 +48,11 @@ class GestureRecognizer:
         if fingers_count == 5:
             return "PALM"
         
-        # 3. 검지 1개만 (노래 재생)
+        # 3. 검지 1개만
         if fingers == [0, 1, 0, 0, 0]:
             return "ONE_FINGER"
         
-        # 4. 브이 (노래 정지)
+        # 4. 브이
         if fingers == [0, 1, 1, 0, 0]:
             return "PEACE"
         
@@ -92,12 +92,12 @@ def main():
     print("🏠 Smart Room Gesture Control System")
     print("=" * 60)
     print("Gestures:")
-    print("  ✊ FIST        -> Light OFF")
-    print("  🖐 PALM        -> Light ON")
-    print("  👆 ONE_FINGER  -> Play Music")
-    print("  ✌️  PEACE       -> Pause Music")
-    print("  👍 THUMBS_UP   -> Volume UP")
-    print("  👎 THUMBS_DOWN -> Volume DOWN")
+    print("  ✊ FIST        -> LED OFF")
+    print("  🖐 PALM        -> LED ON")
+    print("  👆 ONE_FINGER  -> Door OPEN")
+    print("  ✌️  PEACE       -> Door CLOSE")
+    print("  👍 THUMBS_UP   -> (Reserved)")
+    print("  👎 THUMBS_DOWN -> (Reserved)")
     print("=" * 60)
     print("\nPress 'q' to quit.\n")
     
@@ -130,11 +130,11 @@ def main():
                     # 디바이스 상태 표시
                     status = controller.get_status()
                     light_status = "ON" if status['light']['on'] else "OFF"
-                    music_status = "PLAYING" if status['music']['playing'] else "PAUSED"
+                    door_status = "OPEN" if status['door']['open'] else "CLOSED"
                     
                     cv2.putText(frame, f"Light: {light_status}", (10, 100),
                                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
-                    cv2.putText(frame, f"Music: {music_status} Vol: {status['music']['volume']}%", (10, 140),
+                    cv2.putText(frame, f"Door: {door_status}", (10, 140),
                                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
                     
                     # 제스처에 따른 동작 실행
@@ -144,25 +144,22 @@ def main():
                         print('='*40)
                         
                         if current_gesture == "FIST":
-                            controller.toggle_light(False)
+                            controller.toggle_light(False)  # LED OFF
+                            
                         elif current_gesture == "PALM":
-                            controller.toggle_light(True)
+                            controller.toggle_light(True)   # LED ON
+                            
                         elif current_gesture == "ONE_FINGER":
-                            # 음악이 꺼져있으면 켜기
-                            if not controller.music_playing:
-                                controller.toggle_music()
-                            else:
-                                print("Music already playing!")
+                            controller.open_door()          # 문 열기
+                            
                         elif current_gesture == "PEACE":
-                            # 음악이 켜져있으면 끄기
-                            if controller.music_playing:
-                                controller.toggle_music()
-                            else:
-                                print("Music already paused!")
+                            controller.close_door()         # 문 닫기
+                            
                         elif current_gesture == "THUMBS_UP":
-                            controller.volume_up()
+                            print("(Reserved gesture)")
+                            
                         elif current_gesture == "THUMBS_DOWN":
-                            controller.volume_down()
+                            print("(Reserved gesture)")
             
             cv2.imshow('Smart Room Control', frame)
             

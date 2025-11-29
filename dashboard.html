@@ -13,7 +13,7 @@
 
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #005c53;
         min-height: 100vh;
       }
 
@@ -59,7 +59,7 @@
       .gesture-text {
         font-size: 4em;
         font-weight: bold;
-        color: #667eea;
+        color: #005c53;
         min-height: 100px;
         display: flex;
         align-items: center;
@@ -148,37 +148,12 @@
         color: #999;
       }
 
-      /* 음악 색상 */
-      .music-playing {
-        color: #1db954;
+      /* 문 색상 */
+      .door-open {
+        color: #4caf50;
       }
-      .music-paused {
+      .door-closed {
         color: #999;
-      }
-
-      /* 팬 색상 */
-      .fan-active {
-        color: #00bfff;
-      }
-      .fan-inactive {
-        color: #999;
-      }
-
-      /* 프로그레스 바 */
-      .progress-bar {
-        width: 100%;
-        height: 20px;
-        background: #eee;
-        border-radius: 10px;
-        overflow: hidden;
-        margin-top: 10px;
-      }
-
-      .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #667eea, #764ba2);
-        transition: width 0.3s;
-        border-radius: 10px;
       }
 
       /* 연결 상태 */
@@ -270,72 +245,28 @@
               <strong id="light-status-text">Off</strong>
             </div>
             <div>
-              <span>Brightness:</span>
-              <strong id="light-brightness">50%</strong>
+              <span>Control:</span>
+              <strong>Gesture Based</strong>
             </div>
-          </div>
-          <div class="progress-bar">
-            <div
-              class="progress-fill"
-              id="light-progress"
-              style="width: 50%"
-            ></div>
           </div>
         </div>
 
-        <!-- 음악 카드 -->
+        <!-- 문 카드 -->
         <div class="status-card">
           <h2>
-            <span class="card-icon">🎵</span>
-            Music Player
+            <span class="card-icon">🚪</span>
+            Door Control
           </h2>
-          <div class="status-value music-paused" id="music-status">PAUSED</div>
+          <div class="status-value door-closed" id="door-status">CLOSED</div>
           <div class="status-details">
             <div>
               <span>Status:</span>
-              <strong id="music-status-text">Paused</strong>
+              <strong id="door-status-text">Closed</strong>
             </div>
             <div>
-              <span>Volume:</span>
-              <strong id="music-volume">50%</strong>
+              <span>Control:</span>
+              <strong>Servo Motor</strong>
             </div>
-            <div>
-              <span>Song:</span>
-              <strong id="music-song">Song 1</strong>
-            </div>
-          </div>
-          <div class="progress-bar">
-            <div
-              class="progress-fill"
-              id="volume-progress"
-              style="width: 50%"
-            ></div>
-          </div>
-        </div>
-
-        <!-- 팬 카드 -->
-        <div class="status-card">
-          <h2>
-            <span class="card-icon">🌀</span>
-            Fan Control
-          </h2>
-          <div class="status-value fan-inactive" id="fan-status">OFF</div>
-          <div class="status-details">
-            <div>
-              <span>Speed:</span>
-              <strong id="fan-speed">0%</strong>
-            </div>
-            <div>
-              <span>Status:</span>
-              <strong id="fan-status-text">Inactive</strong>
-            </div>
-          </div>
-          <div class="progress-bar">
-            <div
-              class="progress-fill"
-              id="fan-progress"
-              style="width: 0%"
-            ></div>
           </div>
         </div>
       </div>
@@ -358,10 +289,10 @@
 
       // 제스처 이름 매핑
       const GESTURE_NAMES = {
-        FIST: "Fist",
-        PALM: "Palm Open",
-        ONE_FINGER: "One Finger",
-        PEACE: "Peace Sign",
+        FIST: "Fist - LED OFF",
+        PALM: "Palm Open - LED ON",
+        ONE_FINGER: "One Finger - Door OPEN",
+        PEACE: "Peace Sign - Door CLOSE",
         THUMBS_UP: "Thumbs Up",
         THUMBS_DOWN: "Thumbs Down",
         UNKNOWN: "Waiting...",
@@ -400,37 +331,16 @@
             .on
             ? "On"
             : "Off";
-          document.getElementById("light-brightness").textContent =
-            data.light.brightness + "%";
-          document.getElementById("light-progress").style.width =
-            data.light.brightness + "%";
 
-          // 음악 상태 업데이트
-          const musicStatus = document.getElementById("music-status");
-          musicStatus.textContent = data.music.playing ? "PLAYING" : "PAUSED";
-          musicStatus.className =
-            "status-value " +
-            (data.music.playing ? "music-playing" : "music-paused");
-          document.getElementById("music-status-text").textContent = data.music
-            .playing
-            ? "Playing"
-            : "Paused";
-          document.getElementById("music-volume").textContent =
-            data.music.volume + "%";
-          document.getElementById("music-song").textContent = data.music.song;
-          document.getElementById("volume-progress").style.width =
-            data.music.volume + "%";
-
-          // 팬 상태 업데이트
-          const fanSpeed = data.fan.speed;
-          const fanStatus = document.getElementById("fan-status");
-          fanStatus.textContent = fanSpeed > 0 ? "ON" : "OFF";
-          fanStatus.className =
-            "status-value " + (fanSpeed > 0 ? "fan-active" : "fan-inactive");
-          document.getElementById("fan-speed").textContent = fanSpeed + "%";
-          document.getElementById("fan-status-text").textContent =
-            fanSpeed > 0 ? "Active" : "Inactive";
-          document.getElementById("fan-progress").style.width = fanSpeed + "%";
+          // 문 상태 업데이트
+          const doorStatus = document.getElementById("door-status");
+          doorStatus.textContent = data.door.open ? "OPEN" : "CLOSED";
+          doorStatus.className =
+            "status-value " + (data.door.open ? "door-open" : "door-closed");
+          document.getElementById("door-status-text").textContent = data.door
+            .open
+            ? "Open"
+            : "Closed";
         } catch (error) {
           console.error("Error fetching status:", error);
 

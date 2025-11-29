@@ -7,11 +7,11 @@ from gesture_recognition import GestureRecognizer
 from device_controller import DeviceController
 
 app = Flask(__name__)
-CORS(app)  # 워드프레스에서 접근 가능하도록
+CORS(app)
 
 # 전역 변수
 recognizer = GestureRecognizer()
-controller = DeviceController()  # 시뮬레이션 모드
+controller = DeviceController()
 current_gesture = "UNKNOWN"
 
 class GestureRecognitionThread(threading.Thread):
@@ -20,7 +20,7 @@ class GestureRecognitionThread(threading.Thread):
         super().__init__()
         self.running = True
         self.cap = cv2.VideoCapture(0)
-        self.daemon = True  # 메인 프로그램 종료시 같이 종료
+        self.daemon = True
     
     def run(self):
         global current_gesture
@@ -51,26 +51,24 @@ class GestureRecognitionThread(threading.Thread):
                         elif gesture == "PALM":
                             controller.toggle_light(True)
                         elif gesture == "ONE_FINGER":
-                            if not controller.music_playing:
-                                controller.toggle_music()
+                            controller.open_door()
                         elif gesture == "PEACE":
-                            if controller.music_playing:
-                                controller.toggle_music()
+                            controller.close_door()
                         elif gesture == "THUMBS_UP":
-                            controller.volume_up()
+                            print("(Reserved gesture)")
                         elif gesture == "THUMBS_DOWN":
-                            controller.volume_down()
+                            print("(Reserved gesture)")
             else:
                 current_gesture = "UNKNOWN"
             
-            time.sleep(0.05)  # CPU 사용량 조절
+            time.sleep(0.05)
     
     def stop(self):
         self.running = False
         self.cap.release()
         print("🎥 Camera thread stopped")
 
-# 백그라운드 스레드 시작
+# 백그라운드 스레드
 gesture_thread = None
 
 @app.route('/')
@@ -83,7 +81,7 @@ def index():
             "/api/status": "Get device status",
             "/api/gesture": "Get current gesture",
             "/api/devices/light": "Get light status",
-            "/api/devices/music": "Get music status"
+            "/api/devices/door": "Get door status"
         }
     })
 
@@ -108,17 +106,11 @@ def get_light_status():
     status = controller.get_status()
     return jsonify(status['light'])
 
-@app.route('/api/devices/music')
-def get_music_status():
-    """음악 상태만 반환"""
+@app.route('/api/devices/door')
+def get_door_status():
+    """문 상태만 반환"""
     status = controller.get_status()
-    return jsonify(status['music'])
-
-@app.route('/api/devices/fan')
-def get_fan_status():
-    """팬 상태만 반환"""
-    status = controller.get_status()
-    return jsonify(status['fan'])
+    return jsonify(status['door'])
 
 def start_gesture_recognition():
     """제스처 인식 스레드 시작"""
@@ -142,7 +134,7 @@ if __name__ == '__main__':
     print("  - http://localhost:5000/api/status")
     print("  - http://localhost:5000/api/gesture")
     print("  - http://localhost:5000/api/devices/light")
-    print("  - http://localhost:5000/api/devices/music")
+    print("  - http://localhost:5000/api/devices/door")
     print("\n Press Ctrl+C to stop\n")
     print("=" * 60)
     
