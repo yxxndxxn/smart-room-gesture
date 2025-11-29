@@ -85,7 +85,7 @@ class GestureRecognizer:
 
 def main():
     recognizer = GestureRecognizer()
-    controller = DeviceController()
+    controller = DeviceController(arduino_port='COM3')
     cap = cv2.VideoCapture(0)
     
     print("=" * 60)

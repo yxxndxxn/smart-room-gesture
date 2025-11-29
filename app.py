@@ -11,7 +11,7 @@ CORS(app)
 
 # 전역 변수
 recognizer = GestureRecognizer()
-controller = DeviceController()
+controller = DeviceController(arduino_port='COM3')
 current_gesture = "UNKNOWN"
 
 class GestureRecognitionThread(threading.Thread):
