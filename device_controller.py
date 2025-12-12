@@ -6,7 +6,8 @@ class DeviceController:
         
         # 디바이스 상태
         self.light_on = False
-        self.door_open = False  # 문 상태 추가!
+        self.door_open = False
+        self.music_playing = False  # 음악 상태 추가!
     
     def toggle_light(self, turn_on):
         """조명 ON/OFF"""
@@ -49,6 +50,32 @@ class DeviceController:
         print(f"🚪 Door: CLOSED")
         return "CLOSED"
     
+    def play_music(self):
+        """음악 재생"""
+        self.arduino.send_command("MUSIC_PLAY")
+        
+        response = self.arduino.read_response()
+        if response and "MUSIC:" in response:
+            self.music_playing = response.split(":")[1] == "1"
+        else:
+            self.music_playing = True
+        
+        print(f"🎵 Music: PLAYING")
+        return "PLAYING"
+    
+    def stop_music(self):
+        """음악 정지"""
+        self.arduino.send_command("MUSIC_STOP")
+        
+        response = self.arduino.read_response()
+        if response and "MUSIC:" in response:
+            self.music_playing = response.split(":")[1] == "1"
+        else:
+            self.music_playing = False
+        
+        print(f"🎵 Music: STOPPED")
+        return "STOPPED"
+    
     def get_status(self):
         """현재 모든 디바이스 상태 반환"""
         return {
@@ -57,6 +84,9 @@ class DeviceController:
             },
             "door": {
                 "open": self.door_open
+            },
+            "music": {
+                "playing": self.music_playing
             }
         }
     

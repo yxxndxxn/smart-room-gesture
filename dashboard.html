@@ -13,7 +13,7 @@
 
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: #005c53;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
       }
 
@@ -59,7 +59,7 @@
       .gesture-text {
         font-size: 4em;
         font-weight: bold;
-        color: #005c53;
+        color: #667eea;
         min-height: 100px;
         display: flex;
         align-items: center;
@@ -153,6 +153,14 @@
         color: #4caf50;
       }
       .door-closed {
+        color: #999;
+      }
+
+      /* 음악 색상 */
+      .music-playing {
+        color: #1db954;
+      }
+      .music-stopped {
         color: #999;
       }
 
@@ -269,12 +277,37 @@
             </div>
           </div>
         </div>
+
+        <!-- 음악 카드 ⭐ 새로 추가! -->
+        <div class="status-card">
+          <h2>
+            <span class="card-icon">🎵</span>
+            Music Player
+          </h2>
+          <div class="status-value music-stopped" id="music-status">
+            STOPPED
+          </div>
+          <div class="status-details">
+            <div>
+              <span>Status:</span>
+              <strong id="music-status-text">Stopped</strong>
+            </div>
+            <div>
+              <span>Control:</span>
+              <strong>Buzzer Module</strong>
+            </div>
+            <div>
+              <span>Song:</span>
+              <strong>Happy Birthday</strong>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
     <script>
-      // Flask API URL
-      const API_URL = "http://localhost:5000";
+      // Flask API URL (라즈베리파이 IP로 변경!)
+      const API_URL = "http://192.168.0.100:5000"; // 여기 수정!
 
       // 제스처 이모지 매핑
       const GESTURE_EMOJIS = {
@@ -293,8 +326,8 @@
         PALM: "Palm Open - LED ON",
         ONE_FINGER: "One Finger - Door OPEN",
         PEACE: "Peace Sign - Door CLOSE",
-        THUMBS_UP: "Thumbs Up",
-        THUMBS_DOWN: "Thumbs Down",
+        THUMBS_UP: "Thumbs Up - Music PLAY",
+        THUMBS_DOWN: "Thumbs Down - Music STOP",
         UNKNOWN: "Waiting...",
       };
 
@@ -341,6 +374,17 @@
             .open
             ? "Open"
             : "Closed";
+
+          // 음악 상태 업데이트 ⭐ 새로 추가!
+          const musicStatus = document.getElementById("music-status");
+          musicStatus.textContent = data.music.playing ? "PLAYING" : "STOPPED";
+          musicStatus.className =
+            "status-value " +
+            (data.music.playing ? "music-playing" : "music-stopped");
+          document.getElementById("music-status-text").textContent = data.music
+            .playing
+            ? "Playing"
+            : "Stopped";
         } catch (error) {
           console.error("Error fetching status:", error);
 

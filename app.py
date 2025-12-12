@@ -63,9 +63,9 @@ class GestureRecognitionThread(threading.Thread):
                         elif gesture == "PEACE":
                             controller.close_door()
                         elif gesture == "THUMBS_UP":
-                            print("(Reserved gesture)")
+                            controller.play_music()
                         elif gesture == "THUMBS_DOWN":
-                            print("(Reserved gesture)")
+                            controller.stop_music()
                         
                         # 상태 변경 후 출력
                         status = controller.get_status()
@@ -124,6 +124,12 @@ def get_door_status():
     """문 상태만 반환"""
     status = controller.get_status()
     return jsonify(status['door'])
+
+@app.route('/api/devices/music')
+def get_music_status():
+    """음악 상태만 반환"""
+    status = controller.get_status()
+    return jsonify(status['music'])
 
 def start_gesture_recognition():
     """제스처 인식 스레드 시작"""

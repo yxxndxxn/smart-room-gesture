@@ -131,10 +131,13 @@ def main():
                     status = controller.get_status()
                     light_status = "ON" if status['light']['on'] else "OFF"
                     door_status = "OPEN" if status['door']['open'] else "CLOSED"
+                    music_status = "PLAYING" if status['music']['playing'] else "STOPPED"
                     
                     cv2.putText(frame, f"Light: {light_status}", (10, 100),
                                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
                     cv2.putText(frame, f"Door: {door_status}", (10, 140),
+                               cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
+                    cv2.putText(frame, f"Music: {music_status}", (10, 180),
                                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
                     
                     # 제스처에 따른 동작 실행
@@ -156,10 +159,10 @@ def main():
                             controller.close_door()         # 문 닫기
                             
                         elif current_gesture == "THUMBS_UP":
-                            print("(Reserved gesture)")
+                            controller.play_music()         # 음악 재생 ⭐
                             
                         elif current_gesture == "THUMBS_DOWN":
-                            print("(Reserved gesture)")
+                            controller.stop_music()         # 음악 정지 ⭐
             
             cv2.imshow('Smart Room Control', frame)
             
