@@ -16,3 +16,6 @@ Thumbs.db
 
 # 기타
 *.log
+
+# Analytics data
+gesture_log.csv

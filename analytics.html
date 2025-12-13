@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -199,69 +199,69 @@
 
     <div class="container">
       <div class="header">
-        <h1>📊 사용자 행동 패턴 분석</h1>
+        <h1>📊 User Behavior Pattern Analysis</h1>
         <p>Gesture Usage Analytics & Statistics</p>
       </div>
 
       <div class="nav-buttons">
-        <a href="dashboard.html" class="nav-btn">🏠 메인 대시보드</a>
-        <a href="#" class="nav-btn" onclick="refreshData()">🔄 새로고침</a>
+        <a href="dashboard.html" class="nav-btn">🏠 Main Dashboard</a>
+        <a href="#" class="nav-btn" onclick="refreshData()">🔄 Refresh</a>
       </div>
 
-      <!-- 요약 통계 -->
+      <!-- Summary Statistics -->
       <div class="stats-grid">
         <div class="stat-card">
-          <h3>총 제스처 수</h3>
+          <h3>Total Gestures</h3>
           <div class="stat-value" id="total-gestures">0</div>
         </div>
         <div class="stat-card">
-          <h3>가장 많이 사용한 제스처</h3>
+          <h3>Most Used Gesture</h3>
           <div class="stat-value" id="most-used-gesture" style="font-size: 2em">
             -
           </div>
         </div>
         <div class="stat-card">
-          <h3>가장 많이 제어한 디바이스</h3>
+          <h3>Most Controlled Device</h3>
           <div class="stat-value" id="most-used-device" style="font-size: 2em">
             -
           </div>
         </div>
       </div>
 
-      <!-- 차트 -->
+      <!-- Charts -->
       <div class="chart-grid">
         <div class="chart-card">
-          <h2>제스처 사용 빈도</h2>
+          <h2>Gesture Usage Frequency</h2>
           <canvas id="gestureChart"></canvas>
         </div>
 
         <div class="chart-card">
-          <h2>디바이스 사용 통계</h2>
+          <h2>Device Usage Statistics</h2>
           <canvas id="deviceChart"></canvas>
         </div>
 
         <div class="chart-card">
-          <h2>시간대별 사용 패턴</h2>
+          <h2>Hourly Usage Pattern</h2>
           <canvas id="hourlyChart"></canvas>
         </div>
       </div>
 
-      <!-- 최근 활동 로그 -->
+      <!-- Recent Activity Log -->
       <div class="log-section">
-        <h2>최근 활동 로그</h2>
+        <h2>Recent Activity Log</h2>
         <table class="log-table">
           <thead>
             <tr>
-              <th>시간</th>
-              <th>제스처</th>
-              <th>디바이스</th>
-              <th>동작</th>
+              <th>Time</th>
+              <th>Gesture</th>
+              <th>Device</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody id="log-body">
             <tr>
               <td colspan="4" style="text-align: center; color: #999">
-                데이터 로딩 중...
+                Loading data...
               </td>
             </tr>
           </tbody>
@@ -270,29 +270,29 @@
     </div>
 
     <script>
-      // Flask API URL (라즈베리파이 IP로 변경!)
-      const API_URL = "http://192.168.0.100:5000"; // 여기 수정!
+      // Flask API URL
+      const API_URL = "http://localhost:5000";
 
       let gestureChart, deviceChart, hourlyChart;
 
-      // 제스처 이름 매핑
+      // Gesture name mapping
       const GESTURE_NAMES = {
-        FIST: "주먹 (✊)",
-        PALM: "손바닥 (🖐)",
-        ONE_FINGER: "검지 (👆)",
-        PEACE: "브이 (✌️)",
-        THUMBS_UP: "엄지UP (👍)",
-        THUMBS_DOWN: "엄지DOWN (👎)",
+        FIST: "Fist (✊)",
+        PALM: "Palm (🖐)",
+        ONE_FINGER: "One Finger (👆)",
+        PEACE: "Peace (✌️)",
+        THUMBS_UP: "Thumbs Up (👍)",
+        THUMBS_DOWN: "Thumbs Down (👎)",
       };
 
-      // 디바이스 이름 매핑
+      // Device name mapping
       const DEVICE_NAMES = {
-        LIGHT: "조명 💡",
-        DOOR: "문 🚪",
-        MUSIC: "음악 🎵",
+        LIGHT: "Light 💡",
+        DOOR: "Door 🚪",
+        MUSIC: "Music 🎵",
       };
 
-      // 데이터 가져오기
+      // Fetch analytics data
       async function fetchAnalytics() {
         try {
           const response = await fetch(`${API_URL}/api/analytics`);
@@ -303,21 +303,21 @@
 
           const data = await response.json();
 
-          // 연결 상태
+          // Connection status
           document
             .getElementById("connection-dot")
             .classList.remove("disconnected");
           document.getElementById("connection-text").textContent = "Connected";
 
-          // 요약 통계 업데이트
+          // Update summary
           updateSummary(data);
 
-          // 차트 업데이트
+          // Update charts
           updateGestureChart(data.gesture_frequency);
           updateDeviceChart(data.device_usage);
           updateHourlyChart(data.hourly_usage);
 
-          // 로그 테이블 업데이트
+          // Update log table
           updateLogTable(data.recent_logs);
         } catch (error) {
           console.error("Error fetching analytics:", error);
@@ -329,12 +329,12 @@
         }
       }
 
-      // 요약 통계 업데이트
+      // Update summary statistics
       function updateSummary(data) {
         document.getElementById("total-gestures").textContent =
           data.total_gestures;
 
-        // 가장 많이 사용한 제스처
+        // Most used gesture
         const gestures = data.gesture_frequency;
         if (Object.keys(gestures).length > 0) {
           const mostUsed = Object.keys(gestures).reduce((a, b) =>
@@ -344,7 +344,7 @@
             GESTURE_NAMES[mostUsed] || mostUsed;
         }
 
-        // 가장 많이 제어한 디바이스
+        // Most controlled device
         const devices = data.device_usage;
         if (Object.keys(devices).length > 0) {
           const mostUsedDevice = Object.keys(devices).reduce((a, b) =>
@@ -355,7 +355,7 @@
         }
       }
 
-      // 제스처 차트
+      // Gesture chart
       function updateGestureChart(data) {
         const ctx = document.getElementById("gestureChart").getContext("2d");
 
@@ -372,7 +372,7 @@
             labels: labels,
             datasets: [
               {
-                label: "사용 횟수",
+                label: "Usage Count",
                 data: values,
                 backgroundColor: [
                   "rgba(102, 126, 234, 0.8)",
@@ -405,7 +405,7 @@
         });
       }
 
-      // 디바이스 차트
+      // Device chart
       function updateDeviceChart(data) {
         const ctx = document.getElementById("deviceChart").getContext("2d");
 
@@ -443,7 +443,7 @@
         });
       }
 
-      // 시간대별 차트
+      // Hourly chart
       function updateHourlyChart(data) {
         const ctx = document.getElementById("hourlyChart").getContext("2d");
 
@@ -451,10 +451,10 @@
           hourlyChart.destroy();
         }
 
-        // 0-23시 데이터 준비
+        // Prepare 0-23 hour data
         const hours = Array.from({ length: 24 }, (_, i) => i);
         const values = hours.map((h) => data[h] || 0);
-        const labels = hours.map((h) => `${h}시`);
+        const labels = hours.map((h) => `${h}:00`);
 
         hourlyChart = new Chart(ctx, {
           type: "line",
@@ -462,7 +462,7 @@
             labels: labels,
             datasets: [
               {
-                label: "사용 횟수",
+                label: "Usage Count",
                 data: values,
                 borderColor: "rgba(102, 126, 234, 1)",
                 backgroundColor: "rgba(102, 126, 234, 0.1)",
@@ -490,13 +490,13 @@
         });
       }
 
-      // 로그 테이블 업데이트
+      // Update log table
       function updateLogTable(logs) {
         const tbody = document.getElementById("log-body");
 
         if (logs.length === 0) {
           tbody.innerHTML =
-            '<tr><td colspan="4" style="text-align: center; color: #999;">아직 기록이 없습니다</td></tr>';
+            '<tr><td colspan="4" style="text-align: center; color: #999;">No records yet</td></tr>';
           return;
         }
 
@@ -514,15 +514,15 @@
           .join("");
       }
 
-      // 새로고침
+      // Refresh data
       function refreshData() {
         fetchAnalytics();
       }
 
-      // 페이지 로드 시 데이터 가져오기
+      // Fetch data on page load
       fetchAnalytics();
 
-      // 5초마다 자동 업데이트
+      // Auto refresh every 5 seconds
       setInterval(fetchAnalytics, 5000);
     </script>
   </body>
