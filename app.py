@@ -131,6 +131,24 @@ def get_music_status():
     status = controller.get_status()
     return jsonify(status['music'])
 
+@app.route('/api/analytics')
+def get_analytics():
+    """사용자 행동 패턴 분석 데이터"""
+    analytics = controller.get_analytics()
+    return jsonify(analytics)
+
+@app.route('/api/analytics/gestures')
+def get_gesture_analytics():
+    """제스처 빈도만"""
+    analytics = controller.get_analytics()
+    return jsonify(analytics['gesture_frequency'])
+
+@app.route('/api/analytics/devices')
+def get_device_analytics():
+    """디바이스 사용 통계만"""
+    analytics = controller.get_analytics()
+    return jsonify(analytics['device_usage'])
+
 def start_gesture_recognition():
     """제스처 인식 스레드 시작"""
     global gesture_thread

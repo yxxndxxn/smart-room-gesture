@@ -1,13 +1,15 @@
 from arduino_controller import ArduinoController
+from analytics import GestureAnalytics
 
 class DeviceController:
     def __init__(self, arduino_port=None):
         self.arduino = ArduinoController(arduino_port)
-        
+        self.analytics = GestureAnalytics()  # 분석 객체
+
         # 디바이스 상태
         self.light_on = False
         self.door_open = False
-        self.music_playing = False  # 음악 상태 추가!
+        self.music_playing = False  # 음악 상태
     
     def toggle_light(self, turn_on):
         """조명 ON/OFF"""
@@ -22,6 +24,10 @@ class DeviceController:
         
         status = "ON" if self.light_on else "OFF"
         print(f"💡 Light: {status}")
+
+        gesture = "FIST" if not turn_on else "PALM"
+        self.analytics.log_gesture(gesture, "LIGHT", status)
+
         return status
     
     def open_door(self):
@@ -35,6 +41,9 @@ class DeviceController:
             self.door_open = True
         
         print(f"🚪 Door: OPEN")
+
+        self.analytics.log_gesture("ONE_FINGER", "DOOR", "OPEN")
+
         return "OPEN"
     
     def close_door(self):
@@ -48,6 +57,9 @@ class DeviceController:
             self.door_open = False
         
         print(f"🚪 Door: CLOSED")
+
+        self.analytics.log_gesture("PEACE", "DOOR", "CLOSED")
+
         return "CLOSED"
     
     def play_music(self):
@@ -61,6 +73,9 @@ class DeviceController:
             self.music_playing = True
         
         print(f"🎵 Music: PLAYING")
+
+        self.analytics.log_gesture("THUMBS_UP", "MUSIC", "PLAY")
+
         return "PLAYING"
     
     def stop_music(self):
@@ -74,6 +89,9 @@ class DeviceController:
             self.music_playing = False
         
         print(f"🎵 Music: STOPPED")
+
+        self.analytics.log_gesture("THUMBS_DOWN", "MUSIC", "STOP")
+
         return "STOPPED"
     
     def get_status(self):
@@ -90,5 +108,9 @@ class DeviceController:
             }
         }
     
+    def get_analytics(self):
+        """분석 데이터 반환"""
+        return self.analytics.get_statistics()
+        
     def close(self):
         self.arduino.close()
