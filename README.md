@@ -148,14 +148,14 @@ ls /dev/tty* | grep -E "USB|ACM"
 3. 권한 설정:
 
 ```bash
-sudo chmod 666 /dev/ttyUSB0
+sudo chmod 666 /dev/ttyACM0
 ```
 
 4. 코드에서 포트 수정:
 
 ```python
 # app.py 및 gesture_recognition.py에서
-controller = DeviceController(arduino_port='/dev/ttyUSB0')
+controller = DeviceController(arduino_port='/dev/ttyACM0')
 ```
 
 ## 📁 프로젝트 구조
@@ -207,46 +207,6 @@ smart-room-gesture/
 - **통합 대시보드** (모니터링 + 제어 + 분석)
 - **실제 하드웨어 연동** (시뮬레이션이 아닌 실제 구현)
 - **데이터 기반 인사이트** (행동 패턴 분석)
-
-## 🔮 확장 가능성
-
-### 계획된 기능
-
-- [ ] MQTT 프로토콜 통합 (무선 IoT)
-- [ ] ESP32 지원 (Wi-Fi 연결)
-- [ ] 추가 제스처 (제스처 시퀀스 조합)
-- [ ] 음성 인식 (멀티모달 제어)
-- [ ] 여러 방 동시 제어
-- [ ] 사용자별 맞춤 제스처 학습
-- [ ] 모바일 앱 연동
-- [ ] 머신러닝을 통한 인식 정확도 개선
-
-### 하드웨어 확장
-
-- 커튼/블라인드 제어 (추가 서보모터)
-- 온도 센서 연동
-- 공기질 모니터링
-- 스마트 플러그 연동
-
-## 🎓 교육적 가치
-
-### 습득 기술
-
-- AI/ML 모델 통합 (MediaPipe)
-- 실시간 이미지 처리 (OpenCV)
-- 하드웨어-소프트웨어 통합
-- IoT 시스템 아키텍처
-- REST API 설계
-- 데이터 시각화 (Chart.js)
-- 사용자 행동 분석
-
-### 학습 기술
-
-- 컴퓨터 비전
-- 시리얼 통신 프로토콜
-- 임베디드 시스템 프로그래밍
-- 웹 개발 (프론트엔드 + 백엔드)
-- 데이터 분석 및 시각화
 
 ## 🐛 문제 해결
 
