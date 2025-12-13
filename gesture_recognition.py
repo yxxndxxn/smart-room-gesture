@@ -56,19 +56,13 @@ class GestureRecognizer:
         if fingers == [0, 1, 1, 0, 0]:
             return "PEACE"
         
-        # 5. 엄지 올리기
-        if fingers == [1, 0, 0, 0, 0]:
-            thumb_tip = hand_landmarks.landmark[4]
-            thumb_base = hand_landmarks.landmark[2]
-            if thumb_tip.y < thumb_base.y:
-                return "THUMBS_UP"
-        
-        # 6. 엄지 내리기
-        if fingers == [1, 0, 0, 0, 0]:
-            thumb_tip = hand_landmarks.landmark[4]
-            thumb_base = hand_landmarks.landmark[2]
-            if thumb_tip.y > thumb_base.y:
-                return "THUMBS_DOWN"
+        # 5. 세 손가락 (검지 + 중지 + 약지) - 음악 재생 ⭐
+        if fingers == [0, 1, 1, 1, 0]:
+            return "THREE_FINGERS"
+    
+        # 6. 네 손가락 (엄지 빼고 전부) - 음악 정지 ⭐
+        if fingers == [0, 1, 1, 1, 1]:
+            return "FOUR_FINGERS"
         
         return "UNKNOWN"
     
@@ -96,8 +90,8 @@ def main():
     print("  🖐 PALM        -> LED ON")
     print("  👆 ONE_FINGER  -> Door OPEN")
     print("  ✌️  PEACE       -> Door CLOSE")
-    print("  👍 THUMBS_UP   -> (Reserved)")
-    print("  👎 THUMBS_DOWN -> (Reserved)")
+    print("  🤟 THREE_FINGERS -> Music PLAY")
+    print("  🖖 FOUR_FINGERS  -> Music STOP")
     print("=" * 60)
     print("\nPress 'q' to quit.\n")
     
@@ -158,10 +152,10 @@ def main():
                         elif current_gesture == "PEACE":
                             controller.close_door()         # 문 닫기
                             
-                        elif current_gesture == "THUMBS_UP":
+                        elif current_gesture == "THREE_FINGERS":
                             controller.play_music()         # 음악 재생 ⭐
                             
-                        elif current_gesture == "THUMBS_DOWN":
+                        elif current_gesture == "FOUR_FINGERS":
                             controller.stop_music()         # 음악 정지 ⭐
             
             cv2.imshow('Smart Room Control', frame)

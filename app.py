@@ -62,9 +62,9 @@ class GestureRecognitionThread(threading.Thread):
                             controller.open_door()
                         elif gesture == "PEACE":
                             controller.close_door()
-                        elif gesture == "THUMBS_UP":
+                        elif gesture == "THREE_FINGERS":
                             controller.play_music()
-                        elif gesture == "THUMBS_DOWN":
+                        elif gesture == "FOUR_FINGERS":
                             controller.stop_music()
                         
                         # 상태 변경 후 출력
